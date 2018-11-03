@@ -1,0 +1,49 @@
+{
+    "dataset_reader": {
+      "type": "wongnai_reader", 
+      "lazy": true
+    },
+    "train_data_path": "https://s3-us-west-2.amazonaws.com/thai-corpus/training.jsonl",
+    "validation_data_path": "https://s3-us-west-2.amazonaws.com/thai-corpus/validation.jsonl",
+    "model": {
+      "type": "wongnai_classifier",
+      "text_field_embedder": {
+        "tokens": {
+          "type": "embedding",
+          "pretrained_file": "https://s3-us-west-2.amazonaws.com/thai-corpus/thai2vec02.txt.gz",
+          "embedding_dim": 300,
+          "trainable": false
+        }
+      },
+      "comment_encoder": {
+        "type": "lstm",
+        "bidirectional": true,
+        "input_size": 300,
+        "hidden_size": 300,
+        "num_layers": 1,
+        "dropout": 0.2
+      },
+      "classifier_feedforward": {
+        "input_dim": 600,
+        "num_layers": 2,
+        "hidden_dims": [600, 2],
+        "activations": ["relu", "linear"],
+        "dropout": [0.2, 0.0]
+      }
+    },
+    "iterator": {
+      "type": "bucket",
+      "sorting_keys": [["comment", "num_tokens"]],
+      "batch_size": 128
+    },
+    "trainer": {
+      "num_epochs": 50,
+      "patience": 10,
+      "cuda_device": 0,
+      "grad_clipping": 5.0,
+      "validation_metric": "+accuracy",
+      "optimizer": {
+        "type": "adagrad"
+      }
+    }
+}
