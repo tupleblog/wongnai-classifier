@@ -1,0 +1,105 @@
+<html>
+
+<head>
+  <title>
+    Wongnai: Review Rating Prediction
+  </title>
+  <link rel="stylesheet" type="text/css" href="demo.css" />
+</head>
+
+<body>
+  <div class="pane-container">
+    <div class="pane model">
+      <div class="pane__left model__input">
+        <div class="model__content">
+          <h2><span>Wongnai: Review Rating Prediction</span></h2>
+          <div style="padding: 1.875em 0;">
+            <div class="form__field">
+              <label for="input-comment">comment</label>
+              <input type="text" id="input-comment" required value placeholder="input goes here" />
+            </div>
+
+            <div class="form__field form__field--btn">
+              <button type="button" class="btn btn--icon-disclosure" onclick="predict()">Predict</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pane__right model__output model__output--empty">
+        <div class="pane__thumb"></div>
+        <div class="model__content">
+          <div id="output" class="output">
+            <div class="placeholder">
+              <div class="placeholder__content">
+                <p>Run model to view results</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
+<script>
+  function predict() {
+    var quotedFieldList = ['comment'];
+    var labels = ['Good review', 'Bad review'];
+    var data = {};
+    quotedFieldList.forEach(function (fieldName) {
+      data[fieldName] = document.getElementById("input-" + fieldName).value;
+    })
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/predict');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function () {
+      if (xhr.status == 200) {
+        var canvas = '<canvas id="myChart" width="400" height="100"></canvas>';
+        document.getElementById("output").innerHTML = canvas;
+
+        var response = JSON.parse(xhr.responseText);
+
+        var probs = response['class_probabilities'];
+
+        var sortedInd = Array.from(Array(probs.length).keys())
+                  .sort((a, b) => probs[a] > probs[b] ? -1 : (probs[b] > probs[a]) | 0);
+
+        var ctx = document.getElementById("myChart");
+        var barChart = new Chart(ctx, {
+          type: 'horizontalBar',
+          data: {
+            labels: sortedInd.map(i => labels[i]),
+            datasets: [{
+              data: sortedInd.map(i => probs[i]), 
+              backgroundColor: "#ff6361"
+            }]
+          },
+          options: {
+            legend: {
+                display: false
+            },
+            scales: {
+              yAxes: [{
+                scaleLabel: {
+                  display: true, 
+                  labelString: "Review (Good/Bad)", 
+                  fontSize: 18
+                }
+              }], 
+              xAxes: [{
+                scaleLabel: {
+                  display: true, 
+                  labelString: "Probability", 
+                  fontSize: 18
+                }
+              }]
+            }
+          }
+        });
+      }
+    };
+    xhr.send(JSON.stringify(data));
+  }
+</script>
+
+</html>

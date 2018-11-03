@@ -17,7 +17,7 @@ from allennlp.training.metrics import CategoricalAccuracy
 @Model.register("wongnai_classifier")
 class WongnaiCommentClassifier(Model):
     """
-    Model to classify venue based on input title and abstract
+    Model to classify Wongnai comments
     """
     def __init__(self, 
                  vocab: Vocabulary,
