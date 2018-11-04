@@ -23,7 +23,7 @@ class WongnaiDatasetReader(DatasetReader):
         self._token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
     
     def _read(self, file_path: str) -> Iterator[Instance]:
-        label_dict = {0: 'BAD', 1: 'GOOD'}
+        label_dict = {0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5'}
         with open(cached_path(file_path), "r") as data_file:
             for line in data_file:
                 line = line.strip("\n")
@@ -32,7 +32,7 @@ class WongnaiDatasetReader(DatasetReader):
                 comment_json = json.loads(line)
                 comment = comment_json['text']
                 tokenized_comment = word_tokenize(comment)
-                label = label_dict.get(int(comment_json['target']), 'BAD')
+                label = label_dict.get(int(comment_json['label']), '0')
                 yield self.text_to_instance(tokenized_comment, label)
     
     def text_to_instance(self, tokenized_comment: List[str], label: int = None) -> Instance:
