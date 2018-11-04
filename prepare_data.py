@@ -28,9 +28,13 @@ def predict(comment):
 
 if __name__ == '__main__':
     """
-    Read Wongnai dataset with labels 0, 1 from `sent_raw.csv` file and save to JSON format
+    Read Wongnai dataset, you can download the zip file from https://github.com/wongnai/wongnai-corpus
+
+    wget https://github.com/wongnai/wongnai-corpus/blob/master/review/review_dataset.zip
     """
-    sent_df = pd.read_csv('sent_raw.csv')
-    train_df, valid_df = train_test_split(sent_df, test_size=0.25, stratify=sent_df.target)
+    wongnai_df = pd.read_csv('wongnai_dataset/w_review_train.csv', header=None).rename(columns={0: 'full_text'})
+    wongnai_df['text'] = wongnai_df.full_text.map(lambda x: x.split(';')[0])
+    wongnai_df['label'] = wongnai_df.full_text.map(lambda x: x.split(';')[-1])
+    train_df, valid_df = train_test_split(wongnai_df, test_size=0.25, stratify=wongnai_df['label'])
     save_json([dict(r) for _, r in train_df.iterrows()], 'wongnai_dataset/training.jsonl')
     save_json([dict(r) for _, r in valid_df.iterrows()], 'wongnai_dataset/validation.jsonl')
