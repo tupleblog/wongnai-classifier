@@ -29,8 +29,6 @@ def predict(comment):
 if __name__ == '__main__':
     """
     Read Wongnai dataset, you can download the zip file from https://github.com/wongnai/wongnai-corpus
-
-    wget https://github.com/wongnai/wongnai-corpus/blob/master/review/review_dataset.zip
     """
     wongnai_df = pd.read_csv('wongnai_dataset/w_review_train.csv', header=None).rename(columns={0: 'full_text'})
     wongnai_df['text'] = wongnai_df.full_text.map(lambda x: x.split(';')[0])

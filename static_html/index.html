@@ -44,7 +44,7 @@
 <script>
   function predict() {
     var quotedFieldList = ['comment'];
-    var labels = ['Good review', 'Bad review'];
+    var labels = ['4', '3', '5', '2', '1'];
     var data = {};
     quotedFieldList.forEach(function (fieldName) {
       data[fieldName] = document.getElementById("input-" + fieldName).value;
@@ -58,19 +58,15 @@
         document.getElementById("output").innerHTML = canvas;
 
         var response = JSON.parse(xhr.responseText);
-
         var probs = response['class_probabilities'];
-
-        var sortedInd = Array.from(Array(probs.length).keys())
-                  .sort((a, b) => probs[a] > probs[b] ? -1 : (probs[b] > probs[a]) | 0);
 
         var ctx = document.getElementById("myChart");
         var barChart = new Chart(ctx, {
           type: 'horizontalBar',
           data: {
-            labels: sortedInd.map(i => labels[i]),
+            labels: labels,
             datasets: [{
-              data: sortedInd.map(i => probs[i]), 
+              data: probs, 
               backgroundColor: "#ff6361"
             }]
           },
@@ -82,7 +78,7 @@
               yAxes: [{
                 scaleLabel: {
                   display: true, 
-                  labelString: "Review (Good/Bad)", 
+                  labelString: "Review (1 - 5 stars)", 
                   fontSize: 18
                 }
               }], 

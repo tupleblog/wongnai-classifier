@@ -10,5 +10,6 @@ class WongnaiCommentPredictor(Predictor):
     """
     def _json_to_instance(self, json_dict: JsonDict) -> Instance:
         comment = json_dict['comment']
-        instance = self._dataset_reader.text_to_instance(tokenized_comment=comment)
+        tokenized_comment = word_tokenize(comment)
+        instance = self._dataset_reader.text_to_instance(tokenized_comment=tokenized_comment)
         return instance
