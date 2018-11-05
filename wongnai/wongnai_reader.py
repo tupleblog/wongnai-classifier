@@ -35,7 +35,7 @@ class WongnaiDatasetReader(DatasetReader):
                 label = label_dict.get(int(comment_json['label']), '0')
                 yield self.text_to_instance(tokenized_comment, label)
     
-    def text_to_instance(self, tokenized_comment: List[str], label: int = None) -> Instance:
+    def text_to_instance(self, tokenized_comment: List[str], label: str = None) -> Instance:
         comment = [Token(s) for s in tokenized_comment]
         comment_field = TextField(comment, self._token_indexers)
         fields = {'comment': comment_field}
