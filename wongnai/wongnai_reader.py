@@ -30,7 +30,9 @@ class WongnaiDatasetReader(DatasetReader):
                 if not line:
                     continue
                 comment_json = json.loads(line)
-                comment = comment_json['text']
+                comment = comment_json['text'].strip()
+                comment = comment.replace('-', ' ')
+                comment = ' '.join(comment.split())
                 tokenized_comment = word_tokenize(comment)
                 label = label_dict.get(int(comment_json['label']), '0')
                 yield self.text_to_instance(tokenized_comment, label)
