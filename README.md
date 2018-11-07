@@ -62,3 +62,17 @@ python -m allennlp.service.server_simple \
     --field-name comment \
     --static-dir static_html
 ```
+
+
+## Fully train models
+
+Prepare `experiments` folder e.g. `wongnai_{}.json` from 0 to 9 (for 10 folds CV)
+
+```bash
+python prepare_data.py # prepare data to ``wongnai_dataset`` folder
+for i in `seq 0 10`; do
+    allennlp train experiments/wongnai_$i.json -s output_$i --include-package wongnai
+done
+```
+
+And do ensemble predictions (see code in `prepare_data.py`), output for submission is avialable at `wongnai_dataset/wongnai_submission.csv`
